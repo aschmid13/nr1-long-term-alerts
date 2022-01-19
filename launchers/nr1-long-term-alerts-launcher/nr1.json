@@ -1,0 +1,7 @@
+{
+  "schemaType": "LAUNCHER",
+  "id": "nr1-long-term-alerts-launcher",
+  "displayName": "Nr1LongTermAlertsLauncher",
+  "description": "Describe me",
+  "rootNerdletId": "c254dd3e-c8b6-4095-92cc-6c997ad024d7.nr1-long-term-alerts-nerdlet"
+}
