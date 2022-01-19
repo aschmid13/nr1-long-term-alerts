@@ -12,8 +12,18 @@ import {
   SelectItem,
   Stack,
   StackItem,
-  Switch
+  Switch,
+  Steps,
+  StepsItem,
+  Dropdown,
+  DropdownSection,
+  DropdownItem,
+  NerdGraphQuery,
+  Spinner,
+  Toast
 } from "nr1";
+import { buildEventTypeQueries } from "../util/graphqlbuilders";
+import { EventSelector } from "../form-components/event-selector"
 
 // https://docs.newrelic.com/docs/new-relic-programmable-platform-introduction
 
@@ -30,12 +40,14 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
 
   onChangeAccount(_, value) {
     this.setState({ accountId: value });
+
   }
 
   _onChange(event, value) {
     this.setState({ value });
   }
 
+  
   render() {
     let styles = {
       marginRight: "20px",
@@ -44,6 +56,60 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
     };
     return (
       <div style={styles}>
+        <Steps defaultValue="Get-Started">
+          <StepsItem
+            label="High Level Info"
+            value="Get-Started"
+          >
+            <Form>
+              <TextField
+                label="Name"
+                description="This name will be used for your alert name, and the underlying Events and Synthetic checks that will be setup"
+              />
+              <AccountPicker
+                label="Account"
+                labelInline
+                value={this.state.accountId}
+                onChange={this.onChangeAccount}
+              />
+              <MultilineTextField label="Description" placeholder="Optional" />
+            </Form>
+          </StepsItem>
+          <StepsItem label="Your Alerting Scenario" value="Alert-Data">
+            Tell us about what you'd like to alert on.
+            <Form>
+               <Dropdown Title="EventPicker" label="Event Type" LabelInline>
+                <DropdownItem>4</DropdownItem>
+              </Dropdown>             
+            </Form>
+          </StepsItem>
+          <StepsItem
+            label="Monitor critical workflows"
+            value="monitor-workflows"
+          >
+            <Stack
+              directionType={Stack.DIRECTION_TYPE.VERTICAL}
+              gapType={Stack.GAP_TYPE.LARGE}
+            >
+              <StackItem>
+                Detect outages and poor performance before your users notice.
+              </StackItem>
+              <StackItem>
+                <Button sizeType={Button.SIZE_TYPE.SMALL}>Learn more</Button>
+              </StackItem>
+            </Stack>
+          </StepsItem>
+          <StepsItem label="Configure an alert" value="configure-alert">
+            Configure an alert and we'll tell you when to worry.
+          </StepsItem>
+          <StepsItem label="Query your data" value="query-data">
+            Write your first query in our powerful New Relic Query Language
+            (NRQL).
+          </StepsItem>
+          <StepsItem label="Set up a dashboard" value="setup-dashboard">
+            Create and share dashboards that matter to you and your team.
+          </StepsItem>
+        </Steps>
         <Form
           layoutType={Form.LAYOUT_TYPE.SPLIT}
           splitSizeType={Form.SPLIT_SIZE_TYPE.LARGE}
@@ -58,10 +124,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
             value={this.state.accountId}
             onChange={this.onChangeAccount}
           />
-          <MultilineTextField
-            label="Description"
-            placeholder="Optional"
-          />
+          <MultilineTextField label="Description" placeholder="Optional" />
           <MultilineTextField
             label="NRQL"
             description="Paste your NRQL query here. You can remove the SINCE statement from your query as you will have option further below"
@@ -92,8 +155,10 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
             <SelectItem value="MINUTES">minutes</SelectItem>
             <SelectItem value="SECONDS">seconds</SelectItem>
           </Select>
-            <Switch label="Add a Warning Threshold" 
-            onChange={(e) => alert(`Toggle to: ${e.target.checked}`)} />
+          <Switch
+            label="Add a Warning Threshold"
+            onChange={(e) => alert(`Toggle to: ${e.target.checked}`)}
+          />
           <Select
             label="Warning"
             info="Info value"
