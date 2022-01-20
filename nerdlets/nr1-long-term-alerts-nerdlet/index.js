@@ -41,6 +41,28 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
 
   onChangeAccount(_, value) {
     this.setState({ accountId: value });
+
+
+    NerdGraphQuery.query(
+      buildEventTypeQueries(this.state.accountId)
+    ).then(({ data }) => {
+      const eventTypeSet = new Set();
+      Object.keys(data.actor)
+        .filter((i) => i.includes("query"))
+        .forEach((query) => {
+          data.actor[query].nrql.results.forEach(
+            (eventTypeObj) => {
+              eventTypeSet.add(eventTypeObj.eventType);
+            }
+          );
+        });
+      const eventTypes = Array.from(eventTypeSet).sort();
+      this.setState({
+        eventTypes,
+      });
+    })
+
+    
   }
 
   _onChange(event, value) {
@@ -74,26 +96,26 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
               />
               <MultilineTextField label="Description" placeholder="Optional" />
               <Dropdown
-                onOpen={() =>
-                  NerdGraphQuery.query(
-                    buildEventTypeQueries(this.state.accountId)
-                  ).then(({ data }) => {
-                    const eventTypeSet = new Set();
-                    Object.keys(data.actor)
-                      .filter((i) => i.includes("query"))
-                      .forEach((query) => {
-                        data.actor[query].nrql.results.forEach(
-                          (eventTypeObj) => {
-                            eventTypeSet.add(eventTypeObj.eventType);
-                          }
-                        );
-                      });
-                    const eventTypes = Array.from(eventTypeSet).sort();
-                    this.setState({
-                      eventTypes,
-                    });
-                  })
-                }
+                // onOpen={() =>
+                //   NerdGraphQuery.query(
+                //     buildEventTypeQueries(this.state.accountId)
+                //   ).then(({ data }) => {
+                //     const eventTypeSet = new Set();
+                //     Object.keys(data.actor)
+                //       .filter((i) => i.includes("query"))
+                //       .forEach((query) => {
+                //         data.actor[query].nrql.results.forEach(
+                //           (eventTypeObj) => {
+                //             eventTypeSet.add(eventTypeObj.eventType);
+                //           }
+                //         );
+                //       });
+                //     const eventTypes = Array.from(eventTypeSet).sort();
+                //     this.setState({
+                //       eventTypes,
+                //     });
+                //   })
+                // }
                 items={this.state.eventTypes}
                 title={this.state.selectedEventType}
               >
@@ -108,8 +130,35 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
           <StepsItem label="Your Alerting Scenario" value="Alert-Data">
             Tell us about what you'd like to alert on.
             <Form>
-              <Dropdown Title="EventPicker" label="Event Type" LabelInline>
-                <DropdownItem>4</DropdownItem>
+            <Dropdown
+                // onOpen={() =>
+                //   NerdGraphQuery.query(
+                //     buildEventTypeQueries(this.state.accountId)
+                //   ).then(({ data }) => {
+                //     const eventTypeSet = new Set();
+                //     Object.keys(data.actor)
+                //       .filter((i) => i.includes("query"))
+                //       .forEach((query) => {
+                //         data.actor[query].nrql.results.forEach(
+                //           (eventTypeObj) => {
+                //             eventTypeSet.add(eventTypeObj.eventType);
+                //           }
+                //         );
+                //       });
+                //     const eventTypes = Array.from(eventTypeSet).sort();
+                //     this.setState({
+                //       eventTypes,
+                //     });
+                //   })
+                // }
+                items={this.state.eventTypes}
+                title={this.state.selectedEventType}
+              >
+                {({ item, index }) => (
+                  <DropdownItem key={index} onClick={() => this.onChangeEvent(item)}>
+                    {item}
+                  </DropdownItem>
+                )}
               </Dropdown>
             </Form>
           </StepsItem>
