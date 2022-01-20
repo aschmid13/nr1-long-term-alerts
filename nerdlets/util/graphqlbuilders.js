@@ -3,14 +3,14 @@ import { NerdGraphQuery } from 'nr1';
 export function buildEventTypeQueries(selectedAccountID) {
   const query = `{
     actor {
-      query${selectedAccountID}: account(id: ${selectedAccountID}) {
+      query: account(id: ${selectedAccountID}) {
         nrql(query: "show eventtypes since 1 month ago") {
           results
         }
       }
     }
   }`;
-  return { query, fetchPolicyType: NerdGraphQuery.FETCH_POLICY_TYPE.NO_CACHE };
+  return { query };
 }
 
 export function buildAttributeQueries(selectedAccountID, eventType) {

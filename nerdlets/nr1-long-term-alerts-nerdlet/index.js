@@ -20,10 +20,11 @@ import {
   DropdownItem,
   NerdGraphQuery,
   Spinner,
-  Toast
+  Toast,
+  BlockText
 } from "nr1";
 import { buildEventTypeQueries } from "../util/graphqlbuilders";
-import { EventSelector } from "../form-components/event-selector"
+import { EventSelector } from "../form-components/event-selector";
 
 // https://docs.newrelic.com/docs/new-relic-programmable-platform-introduction
 
@@ -31,7 +32,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   constructor() {
     super(...arguments);
 
-    this.state = { accountId: null };
+    this.state = { accountId: null, eventTypes: null};
 
     this.onChangeAccount = this.onChangeAccount.bind(this);
 
@@ -40,27 +41,24 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
 
   onChangeAccount(_, value) {
     this.setState({ accountId: value });
-
   }
 
   _onChange(event, value) {
     this.setState({ value });
   }
 
-  
+
   render() {
     let styles = {
       marginRight: "20px",
       marginLeft: "20px",
       marginTop: "20px",
     };
+
     return (
       <div style={styles}>
         <Steps defaultValue="Get-Started">
-          <StepsItem
-            label="High Level Info"
-            value="Get-Started"
-          >
+          <StepsItem label="High Level Info" value="Get-Started">
             <Form>
               <TextField
                 label="Name"
@@ -73,14 +71,18 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                 onChange={this.onChangeAccount}
               />
               <MultilineTextField label="Description" placeholder="Optional" />
+              {/* <Dropdown onOpen={() => NerdGraphQuery.query(buildEventTypeQueries(this.state.accountId)).then(({data}) => this.setState( {eventTypes: data.actor.query.nrql.results}))}> */}
+              <Dropdown onOpen={() => NerdGraphQuery.query(buildEventTypeQueries(this.state.accountId)).then(({data}) => console.log( {eventTypes: data.actor.query.nrql.results}))}>
+                <DropdownItem></DropdownItem>
+              </Dropdown>
             </Form>
           </StepsItem>
           <StepsItem label="Your Alerting Scenario" value="Alert-Data">
             Tell us about what you'd like to alert on.
             <Form>
-               <Dropdown Title="EventPicker" label="Event Type" LabelInline>
+              <Dropdown Title="EventPicker" label="Event Type" LabelInline>
                 <DropdownItem>4</DropdownItem>
-              </Dropdown>             
+              </Dropdown>
             </Form>
           </StepsItem>
           <StepsItem
