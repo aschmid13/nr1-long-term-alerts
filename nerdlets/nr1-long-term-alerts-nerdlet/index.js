@@ -49,6 +49,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
       buildEventTypeQueries(value)
     ).then(( {data} ) => {
       const eventTypeSet = new Set();
+      console.log(data.actor.query);
       Object.keys(data.actor)
         .filter((i) => i.includes("query"))
         .forEach((query) => {
@@ -76,21 +77,19 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
 //Also making a Nerdgraph call to pull attributes within the event.
   onChangeEvent(evt) {
   
-
-    console.log(buildAttributeQueries(this.state.accountId, evt))
-    console.log(evt)
     NerdGraphQuery.query(
       buildAttributeQueries(this.state.accountId, evt)
     )     .then(({ data }) => {
       const attributeSet = new Set();
       Object.keys(data.actor)
         .filter(i => i.includes('query'))
-        .forEach(query => {
-              attributeSet.add({ key: '1', type: 'numeric' });
-            data.actor[query].nrql.results.forEach(attributeObj =>
-              attributeSet.add(attributeObj)
-            );
-          })
+        .forEach((query) => {
+          data.actor[query].nrql.results.forEach(
+            (attributeObj) => {
+              attributeSet.add(attributeObj.key);
+            }
+          );
+        });
       const attributesArray = Array.from(attributeSet).sort();
       this.setState({
         attributesArray,
