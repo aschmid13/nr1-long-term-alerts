@@ -26,19 +26,24 @@ import {
 import { buildEventTypeQueries } from "../util/graphqlbuilders";
 import { EventSelector } from "../form-components/event-selector";
 
-// https://docs.newrelic.com/docs/new-relic-programmable-platform-introduction
+//supported aggregation types that will be used in a drop down.
+//The selected aggreagation function will be used to build a query
+let AggregateOptions = ['Average','Count','Sum','latest','Median','Max','Min','UniqueCount']
 
 export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   constructor() {
     super(...arguments);
 
-    this.state = { accountId: null, eventTypes: [], selectedEventType: "Event Type" };
+    this.state = { accountId: null, eventTypes: [], selectedEventType: "Event Type", selectedAggFunc: "Aggregation Functions" };
 
     this.onChangeAccount = this.onChangeAccount.bind(this);
 
     this._onChange = this._onChange.bind(this);
   }
 
+//When an account from the drop down is selected:
+//We run a query to get the Eventtypes from teh account and
+//set the account ID to the state as well.  
   onChangeAccount(_, value) {
     NerdGraphQuery.query(
       buildEventTypeQueries(value)
@@ -66,8 +71,17 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
     this.setState({ value });
   }
 
+//EventType the user selects is added to the state
+//will be used to build a NRQL query
   onChangeEvent(evt) {
     this.setState({ selectedEventType: evt });
+  }
+
+//Aggreagation Function the user selects is added to the state
+//will be used to build a NRQL query
+  onChangeAggFunc(aggFunc) {
+    console.log(aggFunc)
+    this.setState({ selectedAggFunc: aggFunc})
   }
 
   render() {
@@ -92,7 +106,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                 onChange={this.onChangeAccount}
               />
               <MultilineTextField label="Description" placeholder="Optional" />
-              <Dropdown
+              {/* <Dropdown
                 items={this.state.eventTypes}
                 title={this.state.selectedEventType}
               >
@@ -101,18 +115,30 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                     {item}
                   </DropdownItem>
                 )}
-              </Dropdown>
+              </Dropdown> */}
             </Form>
           </StepsItem>
           <StepsItem label="Your Alerting Scenario" value="Alert-Data">
-            Tell us about what you'd like to alert on.
+           {/* Tell us about what you'd like to alert on. */}
             <Form>
             <Dropdown
                 items={this.state.eventTypes}
                 title={this.state.selectedEventType}
+                label="Select the EventType the alert will be based on"
               >
                 {({ item, index }) => (
                   <DropdownItem key={index} onClick={() => this.onChangeEvent(item)}>
+                    {item}
+                  </DropdownItem>
+                )}
+              </Dropdown>
+              <Dropdown
+                items={AggregateOptions}
+                title={this.state.selectedAggFunc}
+                label="Choose your aggregation function"
+              >
+                {({ item, index }) => (
+                  <DropdownItem key={index} onClick={() => this.onChangeAggFunc(item)}>
                     {item}
                   </DropdownItem>
                 )}
