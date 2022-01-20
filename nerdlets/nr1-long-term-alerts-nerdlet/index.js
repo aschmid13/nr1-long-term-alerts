@@ -40,12 +40,9 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   }
 
   onChangeAccount(_, value) {
-    this.setState({ accountId: value });
-
-
     NerdGraphQuery.query(
-      buildEventTypeQueries(this.state.accountId)
-    ).then(({ data }) => {
+      buildEventTypeQueries(value)
+    ).then(( {data} ) => {
       const eventTypeSet = new Set();
       Object.keys(data.actor)
         .filter((i) => i.includes("query"))
@@ -62,7 +59,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
       });
     })
 
-    
+    this.setState({ accountId: value });
   }
 
   _onChange(event, value) {
@@ -96,26 +93,6 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
               />
               <MultilineTextField label="Description" placeholder="Optional" />
               <Dropdown
-                // onOpen={() =>
-                //   NerdGraphQuery.query(
-                //     buildEventTypeQueries(this.state.accountId)
-                //   ).then(({ data }) => {
-                //     const eventTypeSet = new Set();
-                //     Object.keys(data.actor)
-                //       .filter((i) => i.includes("query"))
-                //       .forEach((query) => {
-                //         data.actor[query].nrql.results.forEach(
-                //           (eventTypeObj) => {
-                //             eventTypeSet.add(eventTypeObj.eventType);
-                //           }
-                //         );
-                //       });
-                //     const eventTypes = Array.from(eventTypeSet).sort();
-                //     this.setState({
-                //       eventTypes,
-                //     });
-                //   })
-                // }
                 items={this.state.eventTypes}
                 title={this.state.selectedEventType}
               >
@@ -131,26 +108,6 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
             Tell us about what you'd like to alert on.
             <Form>
             <Dropdown
-                // onOpen={() =>
-                //   NerdGraphQuery.query(
-                //     buildEventTypeQueries(this.state.accountId)
-                //   ).then(({ data }) => {
-                //     const eventTypeSet = new Set();
-                //     Object.keys(data.actor)
-                //       .filter((i) => i.includes("query"))
-                //       .forEach((query) => {
-                //         data.actor[query].nrql.results.forEach(
-                //           (eventTypeObj) => {
-                //             eventTypeSet.add(eventTypeObj.eventType);
-                //           }
-                //         );
-                //       });
-                //     const eventTypes = Array.from(eventTypeSet).sort();
-                //     this.setState({
-                //       eventTypes,
-                //     });
-                //   })
-                // }
                 items={this.state.eventTypes}
                 title={this.state.selectedEventType}
               >
