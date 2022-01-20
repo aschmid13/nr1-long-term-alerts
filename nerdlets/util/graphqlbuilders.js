@@ -16,14 +16,14 @@ export function buildEventTypeQueries(selectedAccountID) {
 export function buildAttributeQueries(selectedAccountID, eventType) {
   const query = `{
     actor {
-      query${selectedAccountID}: account(id: ${selectedAccountID}) {
+      query: account(id: ${selectedAccountID}) {
         nrql(query: "SELECT keyset() FROM ${eventType} since 1 week ago", timeout: 200) {
           results
         }
       }
     }
   }`;
-  return { query, fetchPolicyType: NerdGraphQuery.FETCH_POLICY_TYPE.NO_CACHE };
+  return { query };
 }
 
 export function buildRulesQuery(accountArray) {

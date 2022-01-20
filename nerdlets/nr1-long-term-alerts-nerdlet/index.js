@@ -23,7 +23,7 @@ import {
   Toast,
   BlockText,
 } from "nr1";
-import { buildEventTypeQueries } from "../util/graphqlbuilders";
+import { buildAttributeQueries, buildEventTypeQueries } from "../util/graphqlbuilders";
 import { EventSelector } from "../form-components/event-selector";
 
 //supported aggregation types that will be used in a drop down.
@@ -34,7 +34,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   constructor() {
     super(...arguments);
 
-    this.state = { accountId: null, eventTypes: [], selectedEventType: "Event Type", selectedAggFunc: "Aggregation Functions" };
+    this.state = { accountId: null, eventTypes: [], selectedEventType: "Event Type", selectedAggFunc: "Aggregation Functions", attributesArray: [],selectedAttribute: "Attribute" };
 
     this.onChangeAccount = this.onChangeAccount.bind(this);
 
@@ -73,8 +73,31 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
 
 //EventType the user selects is added to the state
 //will be used to build a NRQL query
+//Also making a Nerdgraph call to pull attributes within the event.
   onChangeEvent(evt) {
-    this.setState({ selectedEventType: evt });
+  
+
+    console.log(buildAttributeQueries(this.state.accountId, evt))
+    console.log(evt)
+    NerdGraphQuery.query(
+      buildAttributeQueries(this.state.accountId, evt)
+    )     .then(({ data }) => {
+      const attributeSet = new Set();
+      Object.keys(data.actor)
+        .filter(i => i.includes('query'))
+        .forEach(query => {
+              attributeSet.add({ key: '1', type: 'numeric' });
+            data.actor[query].nrql.results.forEach(attributeObj =>
+              attributeSet.add(attributeObj)
+            );
+          })
+      const attributesArray = Array.from(attributeSet).sort();
+      this.setState({
+        attributesArray,
+      });
+    })
+
+    this.setState({ selectedEventType: evt }); 
   }
 
 //Aggreagation Function the user selects is added to the state
@@ -82,6 +105,11 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   onChangeAggFunc(aggFunc) {
     console.log(aggFunc)
     this.setState({ selectedAggFunc: aggFunc})
+  }
+
+  onChangeAttr(attr) {
+    console.log(attr)
+    this.setState({ selectedAttribute: attr})
   }
 
   render() {
@@ -133,6 +161,17 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                 )}
               </Dropdown>
               <Dropdown
+                items={this.state.attributesArray}
+                title={this.state.selectedAttribute}
+                label="What is the attribute that is being analyzed?"
+              >
+                {({ item, index }) => (
+                  <DropdownItem key={index} onClick={() => this.onChangeAggFunc(item)}>
+                    {item}
+                  </DropdownItem>
+                )}
+              </Dropdown>
+              <Dropdown
                 items={AggregateOptions}
                 title={this.state.selectedAggFunc}
                 label="Choose your aggregation function"
@@ -143,6 +182,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                   </DropdownItem>
                 )}
               </Dropdown>
+              
             </Form>
           </StepsItem>
           <StepsItem
