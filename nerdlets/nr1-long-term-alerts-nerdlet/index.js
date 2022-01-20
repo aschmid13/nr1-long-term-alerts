@@ -21,7 +21,7 @@ import {
   NerdGraphQuery,
   Spinner,
   Toast,
-  BlockText
+  BlockText,
 } from "nr1";
 import { buildEventTypeQueries } from "../util/graphqlbuilders";
 import { EventSelector } from "../form-components/event-selector";
@@ -32,7 +32,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   constructor() {
     super(...arguments);
 
-    this.state = { accountId: null, eventTypes: null};
+    this.state = { accountId: null, eventTypes: [], selectedEventType: "Event Type" };
 
     this.onChangeAccount = this.onChangeAccount.bind(this);
 
@@ -47,6 +47,9 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
     this.setState({ value });
   }
 
+  onChangeEvent(evt) {
+    this.setState({ selectedEventType: evt });
+  }
 
   render() {
     let styles = {
@@ -54,7 +57,6 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
       marginLeft: "20px",
       marginTop: "20px",
     };
-
     return (
       <div style={styles}>
         <Steps defaultValue="Get-Started">
@@ -71,9 +73,35 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                 onChange={this.onChangeAccount}
               />
               <MultilineTextField label="Description" placeholder="Optional" />
-              {/* <Dropdown onOpen={() => NerdGraphQuery.query(buildEventTypeQueries(this.state.accountId)).then(({data}) => this.setState( {eventTypes: data.actor.query.nrql.results}))}> */}
-              <Dropdown onOpen={() => NerdGraphQuery.query(buildEventTypeQueries(this.state.accountId)).then(({data}) => console.log( {eventTypes: data.actor.query.nrql.results}))}>
-                <DropdownItem></DropdownItem>
+              <Dropdown
+                onOpen={() =>
+                  NerdGraphQuery.query(
+                    buildEventTypeQueries(this.state.accountId)
+                  ).then(({ data }) => {
+                    const eventTypeSet = new Set();
+                    Object.keys(data.actor)
+                      .filter((i) => i.includes("query"))
+                      .forEach((query) => {
+                        data.actor[query].nrql.results.forEach(
+                          (eventTypeObj) => {
+                            eventTypeSet.add(eventTypeObj.eventType);
+                          }
+                        );
+                      });
+                    const eventTypes = Array.from(eventTypeSet).sort();
+                    this.setState({
+                      eventTypes,
+                    });
+                  })
+                }
+                items={this.state.eventTypes}
+                title={this.state.selectedEventType}
+              >
+                {({ item, index }) => (
+                  <DropdownItem key={index} onClick={() => this.onChangeEvent(item)}>
+                    {item}
+                  </DropdownItem>
+                )}
               </Dropdown>
             </Form>
           </StepsItem>
