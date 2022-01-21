@@ -42,6 +42,19 @@ let AggregateOptions = [
   "UniqueCount",
 ];
 
+let Operators = [
+  "=",
+  "!=",
+  "<",
+  "<=",
+  ">",
+  ">=",
+  "LIKE",
+  "NOT LIKE",
+  "IS NULL",
+  "IS NOT NULL",
+];
+
 export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   constructor() {
     super(...arguments);
@@ -53,6 +66,8 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
       selectedAggFunc: "Aggregation Functions",
       attributesArray: [],
       selectedAttribute: "Attribute",
+      selectedScope: "Attribute",
+      selectedScopeOperator: "Operators"
     };
 
     this.onChangeAccount = this.onChangeAccount.bind(this);
@@ -114,13 +129,19 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   //Aggreagation Function the user selects is added to the state
   //will be used to build a NRQL query
   onChangeAggFunc(aggFunc) {
-    console.log(aggFunc);
     this.setState({ selectedAggFunc: aggFunc });
   }
 
   onChangeAttr(attr) {
-    console.log(attr);
     this.setState({ selectedAttribute: attr });
+  }
+
+  onChangeScope(attr) {
+    this.setState({ selectedScope: attr });
+  }
+
+  onChangeOperator(operator) {
+    this.setState({ selectedScopeOperator: operator });
   }
 
   render() {
@@ -134,10 +155,10 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
     };
     return (
       <div style={styles}>
-        <Steps defaultValue="Get-Started">
+        <Steps defaultValue="Event-Stream">
           <StepsItem
-            label="Get Started: Define Your Event Stream"
-            value="Get-Started"
+            label="Define Your Event Stream"
+            value="Event-Stream"
           >
             <p style={elementStyle}>
               Build a NRQL Query that will be used under the hood. A constructed
@@ -197,12 +218,62 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                   </DropdownItem>
                 )}
               </Dropdown>
+              <Dropdown
+                items={this.state.attributesArray}
+                title={this.state.selectedScope}
+                label="Narrow your Scope (optional)"
+              >
+                {({ item, index }) => (
+                  <DropdownItem
+                    key={index}
+                    onClick={() => this.onChangeScope(item)}
+                  >
+                    {item}
+                  </DropdownItem>
+                )}
+              </Dropdown>
+              <Stack verticalType={Stack.VERTICAL_TYPE.FILL_EVENLY}>
+                <StackItem>
+                  <Dropdown
+                    items={this.state.attributesArray}
+                    title={this.state.selectedScope}
+                    label="Narrow your Scope (optional)"
+                  >
+                    {({ item, index }) => (
+                      <DropdownItem
+                        key={index}
+                        onClick={() => this.onChangeScope(item)}
+                      >
+                        {item}
+                      </DropdownItem>
+                    )}
+                  </Dropdown>
+                </StackItem>
+                <StackItem>
+                  <Dropdown
+                    items={Operators}
+                    title={this.state.selectedScopeOperator}
+                    label="Operators"
+                  >
+                    {({ item, index }) => (
+                      <DropdownItem
+                        key={index}
+                        onClick={() => this.onChangeOperator(item)}
+                      >
+                        {item}
+                      </DropdownItem>
+                    )}
+                  </Dropdown>
+                </StackItem>
+                <StackItem>
+                <TextField label="Value" />
+                </StackItem>
+              </Stack>
             </Form>
           </StepsItem>
           <StepsItem label="Configure Your Alert" value="Alert-Data">
             {/* Tell us about what you'd like to alert on. */}
             <Form>
-              <TextField label="runbookUrl" />
               <Select
                 label="Critical"
                 info="Info value"
@@ -248,6 +319,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                 <SelectItem value="SECONDS">seconds</SelectItem>
               </Select>
               <MultilineTextField label="Description" placeholder="Optional" />
+              <TextField label="runbookUrl" />
             </Form>
           </StepsItem>
           <StepsItem label="Confirm & Complete Setup" value="monitor-workflows">
