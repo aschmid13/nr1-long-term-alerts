@@ -46,23 +46,6 @@ const optionsQuery = {
     "Content-Type": "application/json",
   },
   body: query
-  // body: JSON.stringify({
-  //   query: `
-  //     "query" getNrqlResults($accountId: Int!, $nrql: Nrql!) {
-  //       actor {
-  //         account(id: $accountId) {
-  //           nrql(query: $nrql) {
-  //             results
-  //           }
-  //         }
-  //       }
-  //     }
-  //   `,
-  //   variables: {
-  //     accountId: Number(myAccountId),
-  //     nrql: nrql,
-  //   },
-  // }),
 };
 
 function getNrqlResults(optionsQuery) {
@@ -76,16 +59,6 @@ function getNrqlResults(optionsQuery) {
 }
 
 getNrqlResults(optionsQuery);
-
-// // Define expected results using callback function
-// function callback(err, response, body) {
-//   // Log JSON results from endpoint to Synthetics console
-//   console.log(JSON.parse(body).data.actor.account.nrql.results[0].ltMetric);
-//   console.log("Script execution completed");
-
-//   //Make POST request, passing in options and callback.
-//   $http.post(optionsPost, callback);
-// }
 
 function sendToNR(ltMetric) {
   var optionsPost = {
@@ -107,6 +80,3 @@ function sendToNR(ltMetric) {
     console.log(response.body);
   });
 }
-
-// // Make POST request, passing in options and callback
-// $http.post(optionsQuery, callback);
