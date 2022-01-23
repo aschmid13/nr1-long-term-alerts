@@ -22,6 +22,8 @@ import {
   Spinner,
   Toast,
   BlockText,
+  CheckboxGroup,
+  Checkbox
 } from "nr1";
 import {
   buildAttributeQueries,
@@ -55,6 +57,8 @@ let Operators = [
   "IS NOT NULL",
 ];
 
+
+
 export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   constructor() {
     super(...arguments);
@@ -67,7 +71,9 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
       attributesArray: [],
       selectedAttribute: "Attribute",
       selectedScope: "Attribute",
-      selectedScopeOperator: "Operators"
+      selectedScopeOperator: "Operators",
+      selectedFacet: "Facet",
+      checked: false
     };
 
     this.onChangeAccount = this.onChangeAccount.bind(this);
@@ -144,6 +150,23 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
     this.setState({ selectedScopeOperator: operator });
   }
 
+  onChangeFacet(attr) {
+    this.setState({ selectedFacet: attr });
+  }
+//This doesn't work!!!
+  // onWarningSwitch() {
+  //   let initialChecked;
+  //   this.setState(({ checked }) => {
+  //     initialChecked = checked;
+
+  //     return {
+  //       checked : !checked
+  //     }
+  //   })
+  // }
+
+
+
   render() {
     let styles = {
       marginRight: "20px",
@@ -156,6 +179,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
     return (
       <div style={styles}>
         <Steps defaultValue="Event-Stream">
+
           <StepsItem
             label="Define Your Event Stream"
             value="Event-Stream"
@@ -269,6 +293,22 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                 <TextField label="Value" />
                 </StackItem>
               </Stack>
+
+              <Dropdown
+                    items={this.state.attributesArray}
+                    title={this.state.selectedFacet}
+                    label="Select your Facet, or GroupBy (Optional)"
+                  >
+                    {({ item, index }) => (
+                      <DropdownItem
+                        key={index}
+                        onClick={() => this.onChangeFacet(item)}
+                      >
+                        {item}
+                      </DropdownItem>
+                    )}
+                  </Dropdown> 
+              
             </Form>
           </StepsItem>
           <StepsItem label="Configure Your Alert" value="Alert-Data">
@@ -294,10 +334,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                 <SelectItem value="MINUTES">minutes</SelectItem>
                 <SelectItem value="SECONDS">seconds</SelectItem>
               </Select>
-              <Switch
-                label="Add a Warning Threshold"
-                onChange={(e) => alert(`Toggle to: ${e.target.checked}`)}
-              />
+              <Switch label="Add a warning threshold" />
               <Select
                 label="Warning"
                 info="Info value"
