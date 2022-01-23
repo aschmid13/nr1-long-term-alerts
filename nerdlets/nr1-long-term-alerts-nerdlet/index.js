@@ -181,7 +181,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
         <Steps defaultValue="Event-Stream">
 
           <StepsItem
-            label="Define Your Event Stream"
+            label="HII Define Your Event Stream"
             value="Event-Stream"
           >
             <p style={elementStyle}>
