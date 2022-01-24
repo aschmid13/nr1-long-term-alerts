@@ -31,6 +31,7 @@ import {
 } from "../util/graphqlbuilders";
 import { EventSelector } from "../form-components/event-selector";
 import WarningThreshold from "./warningThreshold";
+import CriticalThreshold from "./criticalThreshold";
 
 //supported aggregation types that will be used in a drop down.
 //The selected aggreagation function will be used to build a query
@@ -323,7 +324,8 @@ hideComponent(name) {
           <StepsItem label="Configure Your Alert" value="Alert-Data">
             {/* Tell us about what you'd like to alert on. */}
             <Form>
-              <Select
+              <CriticalThreshold/>
+              {/* <Select
                 label="Critical"
                 info="Info value"
                 onChange={this._onChange}
@@ -339,10 +341,10 @@ hideComponent(name) {
                 <SelectItem value="AT_LEAST_ONCE">At least once in</SelectItem>
               </Select>
               <TextField placeholder="15" />
-              <Select onChange={(evt, value) => alert(value)}>
+              <Select onChange={this._onChange} value={this.state.value}>
                 <SelectItem value="MINUTES">minutes</SelectItem>
                 <SelectItem value="SECONDS">seconds</SelectItem>
-              </Select>
+              </Select> */}
               <Switch label="Add a warning threshold" onChange={() => this.hideComponent("showHideWarning")}  />
               <div>
                 {showHideWarning && <WarningThreshold/>}

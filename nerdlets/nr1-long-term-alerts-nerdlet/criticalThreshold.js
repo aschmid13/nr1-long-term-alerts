@@ -6,21 +6,21 @@ import {
   Form,
   Dropdown,
   DropdownItem,
-  BlockText,
+  BlockText
 } from "nr1";
 
-let WarningThresholdOperators = ["above", "below", "equals"];
-let WarningThresholdOccurences = ["ALL", "AT_LEAST_ONCE"];
-let TimeType = ["MINUTES", "SECONDS"]
+let CriticalThresholdOperators = ["above", "below", "equals"];
+let CriticalThresholdOccurences = ["ALL", "AT_LEAST_ONCE"];
+let TimeType = ["MINUTES", "SECONDS"];
 
-class WarningThreshold extends Component {
+class CriticalThreshold extends Component {
   constructor() {
     super();
     this.state = {
       name: "React",
-      wThresholdOp: "above",
-      wThresholdOccurences: "ALL",
-      wTimeType: "MINTUES"
+      cThresholdOp: "above",
+      cThresholdOccurences: "ALL",
+      cTimeType: "MINTUES",
     };
   }
 
@@ -28,37 +28,38 @@ class WarningThreshold extends Component {
     this.setState({ value });
   }
 
-  onWarningOperatorChange(item) {
-    this.setState({ wThresholdOp: item });
+  onCriticalOperatorChange(item) {
+    this.setState({ cThresholdOp: item });
   }
 
-  onWarningThreshOccuranceChange(item) {
-      this.setState({ wThresholdOccurences: item });
+  onCriticalThreshOccuranceChange(item) {
+      this.setState({ cThresholdOccurences: item });
   }
 
   onTimeTypeChange(item) {
-      this.setState({ wTimeType: item})
+      this.setState({ cTimeType: item})
   }
 
   render() {
+
     let styles = {
         marginBottom: "10px",
       };
+
     return (
-        
       <div>
         <Form>
-            <BlockText style={styles}>
-                Open a warning violation when the query returns a value
+        <BlockText style={styles}>
+                Open a critical priority violation when the query returns a value
             </BlockText>
-          <Dropdown
-            items={WarningThresholdOperators}
-            title={this.state.wThresholdOp}
+            <Dropdown
+            items={CriticalThresholdOperators}
+            title={this.state.cThresholdOp}
           >
             {({ item, index }) => (
               <DropdownItem
                 key={index}
-                onClick={() => this.onWarningOperatorChange(item)}
+                onClick={() => this.onCriticalOperatorChange(item)}
               >
                 {item}
               </DropdownItem>
@@ -69,13 +70,13 @@ class WarningThreshold extends Component {
           <TextField placeholder="threshold" />
 
           <Dropdown
-            items={WarningThresholdOccurences}
-            title={this.state.wThresholdOccurences}
+            items={CriticalThresholdOccurences}
+            title={this.state.cThresholdOccurences}
           >
             {({ item, index }) => (
               <DropdownItem
                 key={index}
-                onClick={() => this.onWarningThreshOccuranceChange(item)}
+                onClick={() => this.onCriticalThreshOccuranceChange(item)}
               >
                 {item}
               </DropdownItem>
@@ -86,7 +87,7 @@ class WarningThreshold extends Component {
 
           <Dropdown
             items={TimeType}
-            title={this.state.wTimeType}
+            title={this.state.cTimeType}
           >
             {({ item, index }) => (
               <DropdownItem
@@ -103,4 +104,5 @@ class WarningThreshold extends Component {
   }
 }
 
-export default WarningThreshold;
+
+export default CriticalThreshold;
