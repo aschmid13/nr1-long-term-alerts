@@ -23,13 +23,15 @@ import {
   Toast,
   BlockText,
   CheckboxGroup,
-  Checkbox
+  Checkbox,
 } from "nr1";
 import {
   buildAttributeQueries,
   buildEventTypeQueries,
 } from "../util/graphqlbuilders";
 import { EventSelector } from "../form-components/event-selector";
+import "../util/config-create.js";
+import { submitConfig } from "../util/config-create.js";
 
 //supported aggregation types that will be used in a drop down.
 //The selected aggreagation function will be used to build a query
@@ -57,8 +59,6 @@ let Operators = [
   "IS NOT NULL",
 ];
 
-
-
 export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   constructor() {
     super(...arguments);
@@ -73,7 +73,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
       selectedScope: "Attribute",
       selectedScopeOperator: "Operators",
       selectedFacet: "Facet",
-      checked: false
+      checked: false,
     };
 
     this.onChangeAccount = this.onChangeAccount.bind(this);
@@ -153,7 +153,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   onChangeFacet(attr) {
     this.setState({ selectedFacet: attr });
   }
-//This doesn't work!!!
+  //This doesn't work!!!
   // onWarningSwitch() {
   //   let initialChecked;
   //   this.setState(({ checked }) => {
@@ -164,8 +164,6 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   //     }
   //   })
   // }
-
-
 
   render() {
     let styles = {
@@ -179,11 +177,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
     return (
       <div style={styles}>
         <Steps defaultValue="Event-Stream">
-
-          <StepsItem
-            label="HII Define Your Event Stream"
-            value="Event-Stream"
-          >
+          <StepsItem label="HII Define Your Event Stream" value="Event-Stream">
             <p style={elementStyle}>
               Build a NRQL Query that will be used under the hood. A constructed
               NRQL Query will be shared with you below.
@@ -290,25 +284,24 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                   </Dropdown>
                 </StackItem>
                 <StackItem>
-                <TextField label="Value" />
+                  <TextField label="Value" />
                 </StackItem>
               </Stack>
 
               <Dropdown
-                    items={this.state.attributesArray}
-                    title={this.state.selectedFacet}
-                    label="Select your Facet, or GroupBy (Optional)"
+                items={this.state.attributesArray}
+                title={this.state.selectedFacet}
+                label="Select your Facet, or GroupBy (Optional)"
+              >
+                {({ item, index }) => (
+                  <DropdownItem
+                    key={index}
+                    onClick={() => this.onChangeFacet(item)}
                   >
-                    {({ item, index }) => (
-                      <DropdownItem
-                        key={index}
-                        onClick={() => this.onChangeFacet(item)}
-                      >
-                        {item}
-                      </DropdownItem>
-                    )}
-                  </Dropdown> 
-              
+                    {item}
+                  </DropdownItem>
+                )}
+              </Dropdown>
             </Form>
           </StepsItem>
           <StepsItem label="Configure Your Alert" value="Alert-Data">
@@ -365,10 +358,16 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
               gapType={Stack.GAP_TYPE.LARGE}
             >
               <StackItem>
-                Detect outages and poor performance before your users notice.
+                How's your config look?
               </StackItem>
               <StackItem>
-                <Button sizeType={Button.SIZE_TYPE.SMALL}>Learn more</Button>
+                <Button
+                  type={Button.TYPE.PRIMARY}
+                  iconType={Button.ICON_TYPE.DOCUMENTS__DOCUMENTS__FILE__A_ADD}
+                  onClick={() => submitConfig()}
+                >
+                  Confirm and Create
+                </Button>
               </StackItem>
             </Stack>
           </StepsItem>
