@@ -20,7 +20,8 @@ class WarningThreshold extends Component {
       name: "React",
       wThresholdOp: "above",
       wThresholdOccurences: "ALL",
-      wTimeType: "MINTUES"
+      wTimeType: "MINTUES",
+      wDuration: "15",
     };
   }
 
@@ -39,6 +40,14 @@ class WarningThreshold extends Component {
   onTimeTypeChange(item) {
       this.setState({ wTimeType: item})
   }
+
+  onDurationChange(eventvalue) {
+    this.setState({ wDuration: eventvalue})
+}
+
+onThresholdChange(eventvalue) {
+    this.setState({ wThreshold : eventvalue})
+}
 
   render() {
     let styles = {
@@ -66,7 +75,8 @@ class WarningThreshold extends Component {
           </Dropdown>
 
 
-          <TextField placeholder="threshold" />
+          <TextField placeholder="threshold"
+          onChange={ () => this.onThresholdChange(event.target.value)} />
 
           <Dropdown
             items={WarningThresholdOccurences}
@@ -82,7 +92,9 @@ class WarningThreshold extends Component {
             )}
           </Dropdown>
 
-          <TextField placeholder="15" />
+          <TextField placeholder="15"
+          onChange={ () => this.onDurationChange(event.target.value)} />
+          
 
           <Dropdown
             items={TimeType}

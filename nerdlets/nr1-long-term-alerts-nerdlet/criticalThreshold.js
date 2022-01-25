@@ -12,6 +12,10 @@ import {
 let CriticalThresholdOperators = ["above", "below", "equals"];
 let CriticalThresholdOccurences = ["ALL", "AT_LEAST_ONCE"];
 let TimeType = ["MINUTES", "SECONDS"];
+let CriticalThresholdOccurences2 = [
+    {label: 'For at least', value: 'ALL'},
+    {label: 'At least once', value: 'AT_LEAST_ONCE'}
+]
 
 class CriticalThreshold extends Component {
   constructor() {
@@ -19,8 +23,9 @@ class CriticalThreshold extends Component {
     this.state = {
       name: "React",
       cThresholdOp: "above",
-      cThresholdOccurences: "ALL",
+      cThresholdOccurences: "For at least",
       cTimeType: "MINTUES",
+      cDuration: 15
     };
   }
 
@@ -38,6 +43,15 @@ class CriticalThreshold extends Component {
 
   onTimeTypeChange(item) {
       this.setState({ cTimeType: item})
+  }
+
+  onDurationChange(eventvalue) {
+      this.setState({ cDuration: eventvalue})
+      console.log(eventvalue)
+  }
+
+  onThresholdChange(eventvalue) {
+      this.setState({ cThreshold : eventvalue})
   }
 
   render() {
@@ -67,7 +81,8 @@ class CriticalThreshold extends Component {
           </Dropdown>
 
 
-          <TextField placeholder="threshold" />
+          <TextField placeholder="threshold" 
+           onChange = {()=> this.onThresholdChange(event.target.value)} />
 
           <Dropdown
             items={CriticalThresholdOccurences}
@@ -83,7 +98,8 @@ class CriticalThreshold extends Component {
             )}
           </Dropdown>
 
-          <TextField placeholder="15" />
+          <TextField placeholder="15"
+          onChange={ () => this.onDurationChange(event.target.value)}/>
 
           <Dropdown
             items={TimeType}
