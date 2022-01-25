@@ -30,8 +30,12 @@ import {
   buildEventTypeQueries,
 } from "../util/graphqlbuilders";
 import { EventSelector } from "../form-components/event-selector";
+
+import WarningThreshold from "./warningThreshold";
+import CriticalThreshold from "./criticalThreshold";
 import "../util/config-create.js";
 import { submitConfig } from "../util/config-create.js";
+
 
 //supported aggregation types that will be used in a drop down.
 //The selected aggreagation function will be used to build a query
@@ -59,6 +63,8 @@ let Operators = [
   "IS NOT NULL",
 ];
 
+
+
 export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   constructor() {
     super(...arguments);
@@ -73,6 +79,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
       selectedScope: "Attribute",
       selectedScopeOperator: "Operators",
       selectedFacet: "Facet",
+      showHideWarning: false,
       checked: false,
     };
 
@@ -153,19 +160,21 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   onChangeFacet(attr) {
     this.setState({ selectedFacet: attr });
   }
-  //This doesn't work!!!
-  // onWarningSwitch() {
-  //   let initialChecked;
-  //   this.setState(({ checked }) => {
-  //     initialChecked = checked;
 
-  //     return {
-  //       checked : !checked
-  //     }
-  //   })
-  // }
+
+
+
+hideComponent(name) {
+  console.log(name);
+  switch (name) {
+    case "showHideWarning":
+    this.setState({ showHideWarning: !this.state.showHideWarning });
+    break;
+  }
+}
 
   render() {
+    const { showHideWarning } = this.state;
     let styles = {
       marginRight: "20px",
       marginLeft: "20px",
@@ -177,7 +186,12 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
     return (
       <div style={styles}>
         <Steps defaultValue="Event-Stream">
-          <StepsItem label="HII Define Your Event Stream" value="Event-Stream">
+
+          <StepsItem
+            label="Define Your Event Stream"
+            value="Event-Stream"
+          >
+
             <p style={elementStyle}>
               Build a NRQL Query that will be used under the hood. A constructed
               NRQL Query will be shared with you below.
@@ -289,65 +303,31 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
               </Stack>
 
               <Dropdown
-                items={this.state.attributesArray}
-                title={this.state.selectedFacet}
-                label="Select your Facet, or GroupBy (Optional)"
-              >
-                {({ item, index }) => (
-                  <DropdownItem
-                    key={index}
-                    onClick={() => this.onChangeFacet(item)}
+
+                    items={this.state.attributesArray}
+                    title={this.state.selectedFacet}
+                    label="Select your Facet, or GroupBy (Optional)"
                   >
-                    {item}
-                  </DropdownItem>
-                )}
-              </Dropdown>
+                    {({ item, index }) => (
+                      <DropdownItem
+                        key={index}
+                        onClick={() => this.onChangeFacet(item)}
+                      >
+                        {item}
+                      </DropdownItem>
+                    )}
+                  </Dropdown> 
             </Form>
           </StepsItem>
           <StepsItem label="Configure Your Alert" value="Alert-Data">
             {/* Tell us about what you'd like to alert on. */}
             <Form>
-              <Select
-                label="Critical"
-                info="Info value"
-                onChange={this._onChange}
-                value={this.state.value}
-              >
-                <SelectItem value="ABOVE">above</SelectItem>
-                <SelectItem value="BELOW">below</SelectItem>
-                <SelectItem value="EQUALS">equals</SelectItem>
-              </Select>
-              <TextField placeholder="threshold" />
-              <Select onChange={this._onChange} value={this.state.value}>
-                <SelectItem value="ALL">for at least</SelectItem>
-                <SelectItem value="AT_LEAST_ONCE">At least once in</SelectItem>
-              </Select>
-              <TextField placeholder="15" />
-              <Select onChange={(evt, value) => alert(value)}>
-                <SelectItem value="MINUTES">minutes</SelectItem>
-                <SelectItem value="SECONDS">seconds</SelectItem>
-              </Select>
-              <Switch label="Add a warning threshold" />
-              <Select
-                label="Warning"
-                info="Info value"
-                onChange={this._onChange}
-                value={this.state.value}
-              >
-                <SelectItem value="ABOVE">above</SelectItem>
-                <SelectItem value="BELOW">below</SelectItem>
-                <SelectItem value="EQUALS">equals</SelectItem>
-              </Select>
-              <TextField placeholder="threshold" />
-              <Select onChange={this._onChange} value={this.state.value}>
-                <SelectItem value="ALL">for at least</SelectItem>
-                <SelectItem value="AT_LEAST_ONCE">At least once in</SelectItem>
-              </Select>
-              <TextField placeholder="15" />
-              <Select onChange={(evt, value) => alert(value)}>
-                <SelectItem value="MINUTES">minutes</SelectItem>
-                <SelectItem value="SECONDS">seconds</SelectItem>
-              </Select>
+              <CriticalThreshold/>
+              <Switch label="Add a warning threshold" onChange={() => this.hideComponent("showHideWarning")}  />
+              <div>
+                {showHideWarning && <WarningThreshold/>}
+              </div>
+
               <MultilineTextField label="Description" placeholder="Optional" />
               <TextField label="runbookUrl" />
             </Form>
