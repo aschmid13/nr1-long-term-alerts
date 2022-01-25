@@ -23,15 +23,19 @@ import {
   Toast,
   BlockText,
   CheckboxGroup,
-  Checkbox
+  Checkbox,
 } from "nr1";
 import {
   buildAttributeQueries,
   buildEventTypeQueries,
 } from "../util/graphqlbuilders";
 import { EventSelector } from "../form-components/event-selector";
+
 import WarningThreshold from "./warningThreshold";
 import CriticalThreshold from "./criticalThreshold";
+import "../util/config-create.js";
+import { submitConfig } from "../util/config-create.js";
+
 
 //supported aggregation types that will be used in a drop down.
 //The selected aggreagation function will be used to build a query
@@ -75,7 +79,8 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
       selectedScope: "Attribute",
       selectedScopeOperator: "Operators",
       selectedFacet: "Facet",
-      showHideWarning: false
+      showHideWarning: false,
+      checked: false,
     };
 
     this.onChangeAccount = this.onChangeAccount.bind(this);
@@ -155,17 +160,8 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   onChangeFacet(attr) {
     this.setState({ selectedFacet: attr });
   }
-//This doesn't work!!!
-  // onWarningSwitch() {
-  //   let initialChecked;
-  //   this.setState(({ checked }) => {
-  //     initialChecked = checked;
 
-  //     return {
-  //       checked : !checked
-  //     }
-  //   })
-  // }
+
 
 
 hideComponent(name) {
@@ -176,6 +172,7 @@ hideComponent(name) {
     break;
   }
 }
+
   render() {
     const { showHideWarning } = this.state;
     let styles = {
@@ -194,6 +191,7 @@ hideComponent(name) {
             label="Define Your Event Stream"
             value="Event-Stream"
           >
+
             <p style={elementStyle}>
               Build a NRQL Query that will be used under the hood. A constructed
               NRQL Query will be shared with you below.
@@ -300,11 +298,12 @@ hideComponent(name) {
                   </Dropdown>
                 </StackItem>
                 <StackItem>
-                <TextField label="Value" />
+                  <TextField label="Value" />
                 </StackItem>
               </Stack>
 
               <Dropdown
+
                     items={this.state.attributesArray}
                     title={this.state.selectedFacet}
                     label="Select your Facet, or GroupBy (Optional)"
@@ -318,33 +317,12 @@ hideComponent(name) {
                       </DropdownItem>
                     )}
                   </Dropdown> 
-              
             </Form>
           </StepsItem>
           <StepsItem label="Configure Your Alert" value="Alert-Data">
             {/* Tell us about what you'd like to alert on. */}
             <Form>
               <CriticalThreshold/>
-              {/* <Select
-                label="Critical"
-                info="Info value"
-                onChange={this._onChange}
-                value={this.state.value}
-              >
-                <SelectItem value="ABOVE">above</SelectItem>
-                <SelectItem value="BELOW">below</SelectItem>
-                <SelectItem value="EQUALS">equals</SelectItem>
-              </Select>
-              <TextField placeholder="threshold" />
-              <Select onChange={this._onChange} value={this.state.value}>
-                <SelectItem value="ALL">for at least</SelectItem>
-                <SelectItem value="AT_LEAST_ONCE">At least once in</SelectItem>
-              </Select>
-              <TextField placeholder="15" />
-              <Select onChange={this._onChange} value={this.state.value}>
-                <SelectItem value="MINUTES">minutes</SelectItem>
-                <SelectItem value="SECONDS">seconds</SelectItem>
-              </Select> */}
               <Switch label="Add a warning threshold" onChange={() => this.hideComponent("showHideWarning")}  />
               <div>
                 {showHideWarning && <WarningThreshold/>}
@@ -360,10 +338,16 @@ hideComponent(name) {
               gapType={Stack.GAP_TYPE.LARGE}
             >
               <StackItem>
-                Detect outages and poor performance before your users notice.
+                How's your config look?
               </StackItem>
               <StackItem>
-                <Button sizeType={Button.SIZE_TYPE.SMALL}>Learn more</Button>
+                <Button
+                  type={Button.TYPE.PRIMARY}
+                  iconType={Button.ICON_TYPE.DOCUMENTS__DOCUMENTS__FILE__A_ADD}
+                  onClick={() => submitConfig()}
+                >
+                  Confirm and Create
+                </Button>
               </StackItem>
             </Stack>
           </StepsItem>
