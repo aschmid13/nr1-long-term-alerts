@@ -24,6 +24,7 @@ import {
   BlockText,
   CheckboxGroup,
   Checkbox,
+  AreaChart
 } from "nr1";
 import {
   buildAttributeQueries,
@@ -35,7 +36,9 @@ import WarningThreshold from "./warningThreshold";
 import CriticalThreshold from "./criticalThreshold";
 import "../util/config-create.js";
 import { submitConfig } from "../util/config-create.js";
-
+import ConfirmationLayout from "./confirmation-layout";
+import ChartPreview from "./ChartPreview";
+import NRQLBuilder from "./nrqlBuilder";
 
 //supported aggregation types that will be used in a drop down.
 //The selected aggreagation function will be used to build a query
@@ -62,8 +65,6 @@ let Operators = [
   "IS NULL",
   "IS NOT NULL",
 ];
-
-
 
 export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   constructor() {
@@ -161,17 +162,14 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
     this.setState({ selectedFacet: attr });
   }
 
-
-
-
-hideComponent(name) {
-  console.log(name);
-  switch (name) {
-    case "showHideWarning":
-    this.setState({ showHideWarning: !this.state.showHideWarning });
-    break;
+  hideComponent(name) {
+    console.log(name);
+    switch (name) {
+      case "showHideWarning":
+        this.setState({ showHideWarning: !this.state.showHideWarning });
+        break;
+    }
   }
-}
 
   render() {
     const { showHideWarning } = this.state;
@@ -186,28 +184,19 @@ hideComponent(name) {
     return (
       <div style={styles}>
         <Steps defaultValue="Event-Stream">
-
-          <StepsItem
-            label="Define Your Event Stream"
-            value="Event-Stream"
-          >
-
+          <StepsItem label="Define Your Event Stream" value="Event-Stream">
             <p style={elementStyle}>
               Build a NRQL Query that will be used under the hood. A constructed
               NRQL Query will be shared with you below.
             </p>
             <Form>
-              {/* <TextField
-                label="Name"
-                description="This name will be used for your alert name, and the underlying Events and Synthetic checks that will be setup"
-              /> */}
+              
               <AccountPicker
                 label="Account"
                 labelInline
                 value={this.state.accountId}
                 onChange={this.onChangeAccount}
               />
-
               <Dropdown
                 items={this.state.eventTypes}
                 title={this.state.selectedEventType}
@@ -301,32 +290,32 @@ hideComponent(name) {
                   <TextField label="Value" />
                 </StackItem>
               </Stack>
-
               <Dropdown
-
-                    items={this.state.attributesArray}
-                    title={this.state.selectedFacet}
-                    label="Select your Facet, or GroupBy (Optional)"
+                items={this.state.attributesArray}
+                title={this.state.selectedFacet}
+                label="Select your Facet, or GroupBy (Optional)"
+              >
+                {({ item, index }) => (
+                  <DropdownItem
+                    key={index}
+                    onClick={() => this.onChangeFacet(item)}
                   >
-                    {({ item, index }) => (
-                      <DropdownItem
-                        key={index}
-                        onClick={() => this.onChangeFacet(item)}
-                      >
-                        {item}
-                      </DropdownItem>
-                    )}
-                  </Dropdown> 
+                    {item}
+                  </DropdownItem>
+                )}
+              </Dropdown>
+              <NRQLBuilder data={this.state}/>
             </Form>
           </StepsItem>
           <StepsItem label="Configure Your Alert" value="Alert-Data">
             {/* Tell us about what you'd like to alert on. */}
             <Form>
-              <CriticalThreshold/>
-              <Switch label="Add a warning threshold" onChange={() => this.hideComponent("showHideWarning")}  />
-              <div>
-                {showHideWarning && <WarningThreshold/>}
-              </div>
+              <CriticalThreshold />
+              <Switch
+                label="Add a warning threshold"
+                onChange={() => this.hideComponent("showHideWarning")}
+              />
+              <div>{showHideWarning && <WarningThreshold />}</div>
 
               <MultilineTextField label="Description" placeholder="Optional" />
               <TextField label="runbookUrl" />
@@ -337,8 +326,9 @@ hideComponent(name) {
               directionType={Stack.DIRECTION_TYPE.VERTICAL}
               gapType={Stack.GAP_TYPE.LARGE}
             >
+              <StackItem>How's your config look?</StackItem>
               <StackItem>
-                How's your config look?
+                <ConfirmationLayout />
               </StackItem>
               <StackItem>
                 <Button
