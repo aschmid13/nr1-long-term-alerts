@@ -15,13 +15,7 @@ class NRQLBuilder extends Component {
   constructor() {
     super();
     this.state = {};
-    let accountId = this.props.data.accountId;
-    let eventType = this.props.data.selectedEventType;
-    let attribute = this.props.data.selectedAttribute;
-    let aggFunc = this.props.data.selectedAggFunc;
-    let scope = this.props.data.selectedScope;
-    let scopeOperator = this.props.data.selectedScopeOperator;
-    let facet = this.props.data.selectedFacet;
+
   }
 
   _onChange(event, value) {
@@ -32,6 +26,7 @@ class NRQLBuilder extends Component {
     let nrql = [
       "FROM ",
       this.props.data.selectedEventType,
+      {eventType},
       " ",
       "SELECT ",
       this.props.data.selectedAggFunc,
