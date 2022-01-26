@@ -24,9 +24,8 @@ class NRQLBuilder extends Component {
 
   buildNRQL() {
     let nrql = [
-      "FROM ",
+      'FROM ',
       this.props.data.selectedEventType,
-      {eventType},
       " ",
       "SELECT ",
       this.props.data.selectedAggFunc,
@@ -40,7 +39,7 @@ class NRQLBuilder extends Component {
       " Value ",
       "FACET ",
       this.props.data.selectedFacet,
-    ].join();
+    ].join('');
 
     return nrql;
   }
@@ -72,7 +71,7 @@ class NRQLBuilder extends Component {
         " Value ",
         "FACET ",
         this.props.data.selectedFacet,
-      ].join();
+      ].join('');
     
     return (
       <div className="NRQLBlock">
