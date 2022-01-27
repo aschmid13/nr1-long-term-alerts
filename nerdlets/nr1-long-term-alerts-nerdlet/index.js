@@ -239,20 +239,6 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                   </DropdownItem>
                 )}
               </Dropdown>
-              <Dropdown
-                items={this.state.attributesArray}
-                title={this.state.selectedScope}
-                label="Narrow your Scope (optional)"
-              >
-                {({ item, index }) => (
-                  <DropdownItem
-                    key={index}
-                    onClick={() => this.onChangeScope(item)}
-                  >
-                    {item}
-                  </DropdownItem>
-                )}
-              </Dropdown>
               <Stack verticalType={Stack.VERTICAL_TYPE.FILL_EVENLY}>
                 <StackItem>
                   <Dropdown
