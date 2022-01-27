@@ -74,6 +74,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
       selectedEventType: "Event Type",
       selectedAggFunc: "Aggregation Functions",
       attributesArray: [],
+      optionalAttributesArray: [],
       selectedAttribute: "Attribute",
       selectedScope: "Attribute",
       selectedScopeOperator: "Operators",
@@ -129,9 +130,15 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
             });
           });
         const attributesArray = Array.from(attributeSet).sort();
+        const optionalAttributesArray = Array.from(attributeSet).sort();
+        optionalAttributesArray.push("NONE");
+
         this.setState({
           attributesArray,
+          optionalAttributesArray
         });
+        console.log(attributesArray);
+        console.log(optionalAttributesArray);
       }
     );
 
@@ -179,6 +186,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
     let elementStyle = {
       marginBottom: "10px",
     };
+    
     return (
       <div style={styles}>
         <Steps defaultValue="Event-Stream">
@@ -240,7 +248,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
               <Stack verticalType={Stack.VERTICAL_TYPE.FILL_EVENLY}>
                 <StackItem>
                   <Dropdown
-                    items={this.state.attributesArray}
+                    items={this.state.optionalAttributesArray}
                     title={this.state.selectedScope}
                     label="Narrow your Scope (optional)"
                   >
@@ -275,7 +283,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                 </StackItem>
               </Stack>
               <Dropdown
-                items={this.state.attributesArray}
+                items={this.state.optionalAttributesArray}
                 title={this.state.selectedFacet}
                 label="Select your Facet, or GroupBy (Optional)"
               >
