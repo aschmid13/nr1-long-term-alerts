@@ -298,7 +298,6 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                   </DropdownItem>
                 )}
               </Dropdown>
-              <NRQLBuilder data={this.state}/>
             </Form>
           </StepsItem>
           <StepsItem label="Configure Your Alert" value="Alert-Data">
@@ -323,6 +322,9 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
               <StackItem>How's your config look?</StackItem>
               <StackItem>
                 <ConfirmationLayout />
+              </StackItem>
+              <StackItem>
+                <NRQLBuilder data={this.state}/>
               </StackItem>
               <StackItem>
                 <Button
