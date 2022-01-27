@@ -30,11 +30,8 @@ import {
   buildAttributeQueries,
   buildEventTypeQueries,
 } from "../util/graphqlbuilders";
-import { EventSelector } from "../form-components/event-selector";
-
 import WarningThreshold from "./warningThreshold";
 import CriticalThreshold from "./criticalThreshold";
-import "../util/config-create.js";
 import { submitConfig } from "../util/config-create.js";
 import ConfirmationLayout from "./confirmation-layout";
 import ChartPreview from "./ChartPreview";

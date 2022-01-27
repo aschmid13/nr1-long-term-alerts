@@ -1,12 +1,32 @@
 import { NerdGraphQuery, Toast } from "nr1";
 
-export function submitConfig() {
-
+export async function submitConfig() {
+  const userId = await getUserId();
   return Toast.showToast({
     title: 'Feedback received',
-    description: 'We will contact you soon.',
+    description: userId,
     type: Toast.TYPE.NORMAL,
   });
+}
+
+export async function getUserId() {
+  const query = `{
+    actor {
+      user {
+        id
+      }
+    }
+  }`;
+  let {data, error } = await NerdGraphQuery.query({query})
+  let userId = null;
+  if (!error) {
+    try {
+      userId = data.actor.user.id;
+    } catch (err) {
+      error = err;
+    }
+  return userId;
+  }
 }
 
 export function getUserKey(selectedAccountID) {
