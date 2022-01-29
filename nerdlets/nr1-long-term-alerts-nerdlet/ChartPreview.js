@@ -1,39 +1,56 @@
 import react, { Component } from "react";
-import { Stack, StackItem, TextField, MultilineTextField, LineChart, AreaChart, BlockText } from "nr1";
+import {
+  Stack,
+  StackItem,
+  TextField,
+  MultilineTextField,
+  LineChart,
+  AreaChart,
+  BlockText,
+} from "nr1";
+import { buildNRQL } from "../util/misc.js";
 
 class ChartPreview extends Component {
   constructor() {
     super();
-    this.state = {
-    };
+    this.state = {};
   }
-//   this.state = {
-//     accountId: null,
-//     eventTypes: [],
-//     selectedEventType: "Event Type",
-//     selectedAggFunc: "Aggregation Functions",
-//     attributesArray: [],
-//     selectedAttribute: "Attribute",
-//     selectedScope: "Attribute",
-//     selectedScopeOperator: "Operators",
-//     selectedFacet: "Facet",
-//     showHideWarning: false,
-//     checked: false,
-//   };
 
   _onChange(event, value) {
     this.setState({ value });
   }
 
   render() {
-      console.log(this.props.data.accountId)
+    let eventType = this.props.data.selectedEventType;
+    let attribute = this.props.data.selectedAttribute;
+    let aggFunc = this.props.data.selectedAggFunc;
+    let scope = this.props.data.selectedScope;
+    let scopeOperator = this.props.data.selectedScopeOperator;
+    let facet = this.props.data.selectedFacet;
+
+    let nrql = buildNRQL(
+      eventType,
+      attribute,
+      aggFunc,
+      scope,
+      scopeOperator,
+      facet
+    );
+
     let styles = {
       marginBottom: "10px",
     };
 
     return (
       <div className="ChartPreview">
-          <BlockText>From {this.props.data.selectedEventType} select {this.props.data.selectedAggFunc}({this.props.data.selectedAttribute})</BlockText>
+        <Stack directionType={Stack.DIRECTION_TYPE.VERTICAL}>
+          <StackItem>
+            <BlockText>{nrql}</BlockText>
+          </StackItem>
+          <StackItem>
+            <LineChart accountIds={[this.props.data.accountId]} query={nrql} />
+          </StackItem>
+        </Stack>
       </div>
     );
   }
