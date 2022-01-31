@@ -35,7 +35,7 @@ import CriticalThreshold from "./criticalThreshold";
 import { submitConfig } from "../util/config-create.js";
 import ConfirmationLayout from "./confirmation-layout";
 import ChartPreview from "./ChartPreview";
-import NRQLBuilder from "./nrqlBuilder";
+import NRQLBuilder from "../util/nrqlBuilder";
 
 //supported aggregation types that will be used in a drop down.
 //The selected aggreagation function will be used to build a query
@@ -84,7 +84,8 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
       selectedScope: "Attribute",
       selectedScopeOperator: "Operators",
       selectedFacet: "Facet",
-      selectedSinceOption: "Hours",
+      selectedSinceOption: "Hour",
+      selectedSinceValue: 15,
       showHideWarning: false,
       checked: false,
     };
@@ -178,11 +179,14 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   }
 
   onSinceValueChange(sinceValue) {
+    console.log(sinceValue)
     this.setState({selectedSinceValue : sinceValue})
   }
 
   onChangeSince(sinceOption) {
+    console.log(sinceOption)
     this.setState({selectedSinceOption : sinceOption})
+
   }
 
   hideComponent(name) {
@@ -360,6 +364,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
             <Stack
               directionType={Stack.DIRECTION_TYPE.VERTICAL}
               gapType={Stack.GAP_TYPE.LARGE}
+              fullWidth
             >
               <StackItem>How's your config look?</StackItem>
               <StackItem>
@@ -369,7 +374,6 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                 <ConfirmationLayout />
               </StackItem>
               <StackItem>
-                <NRQLBuilder data={this.state}/>
               </StackItem>
               <StackItem>
                 <Button

@@ -27,7 +27,8 @@ export function buildNRQL(
     attribute,
     ") ",
   ].join("");
-
+console.log(selectedSinceValue);
+console.log(selectedSinceOption);
   //Build the SINCE statement
   let sinceStatement = "SINCE ${selectedSinceValue} ${selectedSinceOption} AGO";
 
@@ -39,7 +40,7 @@ export function buildNRQL(
   let scopeStatement = "";
   let facetStatement = "";
   let nrql = "";
-
+ 
   
 
   //build the WHERE statement depending on what options where selected
@@ -126,3 +127,4 @@ export function buildNRQL(
 //Optional part 2: WHERE 
 
 // testing this line too
+
