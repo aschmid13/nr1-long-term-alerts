@@ -35,7 +35,7 @@ import CriticalThreshold from "./criticalThreshold";
 import { submitConfig } from "../util/config-create.js";
 import ConfirmationLayout from "./confirmation-layout";
 import ChartPreview from "./ChartPreview";
-import NRQLBuilder from "./nrqlBuilder";
+import NRQLBuilder from "../util/nrqlBuilder";
 
 //supported aggregation types that will be used in a drop down.
 //The selected aggreagation function will be used to build a query
@@ -63,6 +63,12 @@ let Operators = [
   "IS NOT NULL",
 ];
 
+let SinceOptions = [
+  "Minute",
+  "Hour",
+  "Day"
+]
+
 export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   constructor() {
     super(...arguments);
@@ -78,6 +84,8 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
       selectedScope: "Attribute",
       selectedScopeOperator: "Operators",
       selectedFacet: "Facet",
+      selectedSinceOption: "Hour",
+      selectedSinceValue: 15,
       showHideWarning: false,
       checked: false,
     };
@@ -158,6 +166,10 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
     this.setState({ selectedScope: attr });
   }
 
+  onScopeValueChange(value) {
+    this.setState({ scopeValue: value })
+  }
+
   onChangeOperator(operator) {
     this.setState({ selectedScopeOperator: operator });
   }
@@ -166,8 +178,18 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
     this.setState({ selectedFacet: attr });
   }
 
+  onSinceValueChange(sinceValue) {
+    console.log(sinceValue)
+    this.setState({selectedSinceValue : sinceValue})
+  }
+
+  onChangeSince(sinceOption) {
+    console.log(sinceOption)
+    this.setState({selectedSinceOption : sinceOption})
+
+  }
+
   hideComponent(name) {
-    console.log(name);
     switch (name) {
       case "showHideWarning":
         this.setState({ showHideWarning: !this.state.showHideWarning });
@@ -278,7 +300,8 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                   </Dropdown>
                 </StackItem>
                 <StackItem>
-                  <TextField label="Value" />
+                  <TextField label="Value" 
+                  onChange={() => this.onScopeValueChange(event.target.value)} />
                 </StackItem>
               </Stack>
               <Dropdown
@@ -295,6 +318,32 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                   </DropdownItem>
                 )}
               </Dropdown>
+              <Stack verticalType={Stack.VERTICAL_TYPE.CENTER}>
+                <StackItem>
+                <TextField label="Since"
+                onChange={() => this.onSinceValueChange(event.target.value)} />
+                </StackItem>
+                <StackItem>
+                <Dropdown
+                    items={SinceOptions}
+                    title={this.state.selectedSinceOption}
+                    label="Range"
+                  >
+                    {({ item, index }) => (
+                      <DropdownItem
+                        key={index}
+                        onClick={() => this.onChangeSince(item)}
+                      >
+                        {item}
+                      </DropdownItem>
+                    )}
+                  </Dropdown> 
+                </StackItem>
+                <StackItem>
+                  <BlockText>AGO</BlockText>
+                </StackItem>
+              </Stack>
+              
             </Form>
           </StepsItem>
           <StepsItem label="Configure Your Alert" value="Alert-Data">
@@ -315,13 +364,16 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
             <Stack
               directionType={Stack.DIRECTION_TYPE.VERTICAL}
               gapType={Stack.GAP_TYPE.LARGE}
+              fullWidth
             >
               <StackItem>How's your config look?</StackItem>
+              <StackItem>
+                <ChartPreview data={this.state}/>
+              </StackItem>
               <StackItem>
                 <ConfirmationLayout />
               </StackItem>
               <StackItem>
-                <NRQLBuilder data={this.state}/>
               </StackItem>
               <StackItem>
                 <Button
