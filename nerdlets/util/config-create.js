@@ -9,6 +9,7 @@ export async function submitConfig() {
   });
 }
 
+
 export async function getUserId() {
   const query = `{
     actor {
@@ -27,7 +28,32 @@ export async function getUserId() {
     }
   return userId;
   }
-}
+} 
+
+//this is a test ignore it or delete. 
+export async function getUserInfo() {
+  const query = `{
+    actor {
+      user {
+        email
+        id
+        name
+      }
+    }
+  }
+  `;
+  let {data, error } = await NerdGraphQuery.query({query})
+  let userInfo = null;
+  if (!error) {
+    try {
+      userInfo = data.actor.user.id;
+    } catch (err) {
+      error = err;
+    }
+  return userInfo;
+  }
+} 
+
 
 export function getUserKey(selectedAccountID) {
   const query = `{

@@ -21,10 +21,11 @@ import {
   NerdGraphQuery,
   Spinner,
   Toast,
+  Tile,
   BlockText,
   CheckboxGroup,
   Checkbox,
-  AreaChart
+  AreaChart,
 } from "nr1";
 import {
   buildAttributeQueries,
@@ -36,6 +37,8 @@ import { submitConfig } from "../util/config-create.js";
 import ConfirmationLayout from "./confirmation-layout";
 import ChartPreview from "./ChartPreview";
 import NRQLBuilder from "../util/nrqlBuilder";
+import CredentialSection from "./Credential-section";
+import { getUserId } from "../util/config-create";
 
 //supported aggregation types that will be used in a drop down.
 //The selected aggreagation function will be used to build a query
@@ -63,11 +66,7 @@ let Operators = [
   "IS NOT NULL",
 ];
 
-let SinceOptions = [
-  "Minute",
-  "Hour",
-  "Day"
-]
+let SinceOptions = ["Minute", "Hour", "Day"];
 
 export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   constructor() {
@@ -88,6 +87,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
       selectedSinceValue: 15,
       showHideWarning: false,
       checked: false,
+      userId: null,
     };
 
     this.onChangeAccount = this.onChangeAccount.bind(this);
@@ -109,13 +109,18 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
             eventTypeSet.add(eventTypeObj.eventType);
           });
         });
+
       const eventTypes = Array.from(eventTypeSet).sort();
       this.setState({
         eventTypes,
       });
+
+
     });
 
+    
     this.setState({ accountId: value });
+
   }
 
   _onChange(event, value) {
@@ -142,10 +147,11 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
 
         this.setState({
           attributesArray,
-          optionalAttributesArray
+          optionalAttributesArray,
         });
         console.log(attributesArray);
         console.log(optionalAttributesArray);
+        console.log('account ID from state is: ', this.state.accountId);
       }
     );
 
@@ -167,7 +173,7 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   }
 
   onScopeValueChange(value) {
-    this.setState({ scopeValue: value })
+    this.setState({ scopeValue: value });
   }
 
   onChangeOperator(operator) {
@@ -179,14 +185,13 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
   }
 
   onSinceValueChange(sinceValue) {
-    console.log(sinceValue)
-    this.setState({selectedSinceValue : sinceValue})
+    console.log(sinceValue);
+    this.setState({ selectedSinceValue: sinceValue });
   }
 
   onChangeSince(sinceOption) {
-    console.log(sinceOption)
-    this.setState({selectedSinceOption : sinceOption})
-
+    console.log(sinceOption);
+    this.setState({ selectedSinceOption: sinceOption });
   }
 
   hideComponent(name) {
@@ -207,7 +212,8 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
     let elementStyle = {
       marginBottom: "10px",
     };
-    
+
+
     return (
       <div style={styles}>
         <Steps defaultValue="Event-Stream">
@@ -217,7 +223,6 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
               NRQL Query will be shared with you below.
             </p>
             <Form>
-              
               <AccountPicker
                 label="Account"
                 labelInline
@@ -300,8 +305,10 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                   </Dropdown>
                 </StackItem>
                 <StackItem>
-                  <TextField label="Value" 
-                  onChange={() => this.onScopeValueChange(event.target.value)} />
+                  <TextField
+                    label="Value"
+                    onChange={() => this.onScopeValueChange(event.target.value)}
+                  />
                 </StackItem>
               </Stack>
               <Dropdown
@@ -320,11 +327,13 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
               </Dropdown>
               <Stack verticalType={Stack.VERTICAL_TYPE.CENTER}>
                 <StackItem>
-                <TextField label="Since"
-                onChange={() => this.onSinceValueChange(event.target.value)} />
+                  <TextField
+                    label="Since"
+                    onChange={() => this.onSinceValueChange(event.target.value)}
+                  />
                 </StackItem>
                 <StackItem>
-                <Dropdown
+                  <Dropdown
                     items={SinceOptions}
                     title={this.state.selectedSinceOption}
                     label="Range"
@@ -337,13 +346,12 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
                         {item}
                       </DropdownItem>
                     )}
-                  </Dropdown> 
+                  </Dropdown>
                 </StackItem>
                 <StackItem>
                   <BlockText>AGO</BlockText>
                 </StackItem>
               </Stack>
-              
             </Form>
           </StepsItem>
           <StepsItem label="Configure Your Alert" value="Alert-Data">
@@ -360,6 +368,20 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
               <TextField label="runbookUrl" />
             </Form>
           </StepsItem>
+          <StepsItem
+            label="Select the Credentials For This Setup"
+            value="API-Access"
+          >
+            <Stack
+              directionType={Stack.DIRECTION_TYPE.VERTICAL}
+              gapType={Stack.GAP_TYPE.LARGE}
+              fullWidth
+            >
+              <StackItem>
+                      <CredentialSection data={this.state} />
+              </StackItem>
+            </Stack>
+          </StepsItem>
           <StepsItem label="Confirm & Complete Setup" value="monitor-workflows">
             <Stack
               directionType={Stack.DIRECTION_TYPE.VERTICAL}
@@ -368,13 +390,12 @@ export default class Nr1LongTermAlertsNerdletNerdlet extends React.Component {
             >
               <StackItem>How's your config look?</StackItem>
               <StackItem>
-                <ChartPreview data={this.state}/>
+                <ChartPreview data={this.state} />
               </StackItem>
               <StackItem>
                 <ConfirmationLayout />
               </StackItem>
-              <StackItem>
-              </StackItem>
+              <StackItem></StackItem>
               <StackItem>
                 <Button
                   type={Button.TYPE.PRIMARY}
